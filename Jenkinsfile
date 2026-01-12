@@ -50,8 +50,22 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                bat "terraform apply -auto-approve -var-file=%TF_VAR_FILE%"
+                script {
+                    if (env.BRANCH_NAME == 'develop') {
+                        echo "DEV branch detected → auto apply"
+                        bat "terraform apply -auto-approve -var-file=%TF_VAR_FILE%"
+                    }
+                    else if (env.BRANCH_NAME == 'main') {
+                        echo "PROD branch detected → waiting for approval"
+                        input message: "Approve Terraform apply for PROD?"
+                        bat "terraform apply -auto-approve -var-file=%TF_VAR_FILE%"
+                    }
+                    else {
+                        error("Unsupported branch: ${env.BRANCH_NAME}")
+                    }
+                }
             }
         }
+
     }
 }

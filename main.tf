@@ -1,3 +1,12 @@
+terraform {
+  backend "s3" {
+    bucket = "terraform-state-komalpreet-2026"
+    key    = "terraform/dev/terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
+
 provider "aws" {
   region = var.region
 }

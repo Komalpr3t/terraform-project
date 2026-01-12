@@ -13,28 +13,29 @@ pipeline {
     stages {
 
         stage('Detect Branch & Select Environment') {
-            steps {
-                script {
-                    echo "========================================"
-                    echo "Git Branch Detected : ${env.BRANCH_NAME}"
+    steps {
+        script {
+            echo "========================================"
+            echo "Git Branch Detected : ${env.BRANCH_NAME}"
 
-                    if (env.BRANCH_NAME == 'main') {
-                        ENV_NAME    = 'prod'
-                        TF_VAR_FILE = 'prod.tfvars'
-                    } else if (env.BRANCH_NAME == 'develop') {
-                        ENV_NAME    = 'dev'
-                        TF_VAR_FILE = 'dev.tfvars'
-                    } else {
-                        error("Unsupported branch: ${env.BRANCH_NAME}")
-                    }
-
-                    echo "Selected Environment : ${ENV_NAME}"
-                    echo "Terraform Vars File  : ${TF_VAR_FILE}"
-                    echo "AWS Region           : us-east-1"
-                    echo "========================================"
-                }
+            if (env.BRANCH_NAME == 'main') {
+                env.ENV_NAME    = 'prod'
+                env.TF_VAR_FILE = 'prod.tfvars'
+            } else if (env.BRANCH_NAME == 'develop') {
+                env.ENV_NAME    = 'dev'
+                env.TF_VAR_FILE = 'dev.tfvars'
+            } else {
+                error("Unsupported branch: ${env.BRANCH_NAME}")
             }
+
+            echo "Selected Environment : ${env.ENV_NAME}"
+            echo "Terraform Vars File  : ${env.TF_VAR_FILE}"
+            echo "AWS Region           : us-east-1"
+            echo "========================================"
         }
+    }
+}
+
 
         stage('Terraform Init') {
             steps {
